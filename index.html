@@ -27,9 +27,7 @@ nav{display:flex;gap:22px;font-size:12px;letter-spacing:.14em;text-transform:upp
 .ch .temp{font-family:Anton,sans-serif;font-size:clamp(40px,5vw,72px);color:var(--red);margin-top:10px}
 #stage{position:absolute;inset:0;z-index:4}
 #stage img{position:absolute;left:0;top:0;display:block;will-change:transform;filter:drop-shadow(0 18px 22px rgba(0,0,0,.55))}
-.spl{position:absolute;left:0;top:0;pointer-events:none;opacity:0;will-change:transform,opacity,filter}
-#splB{z-index:3}#splF{z-index:5;mix-blend-mode:screen}
-.pin.shake{}
+#stage img.frag{filter:drop-shadow(0 6px 8px rgba(0,0,0,.5));opacity:0}
 .lab{position:absolute;left:0;top:0;z-index:7;display:flex;align-items:center;gap:10px;white-space:nowrap;font-size:13px;opacity:0;will-change:transform,opacity}
 .lab i{display:block;width:56px;height:1px;background:var(--red)}
 .lab b{font-family:Anton,sans-serif;font-weight:400;color:var(--red);font-size:15px;letter-spacing:.06em}
@@ -70,7 +68,7 @@ section.s{position:relative;padding:18vh 6vw;border-top:1px solid var(--line)}
   <div class="ch" id="c1"><div class="k">01 // DOUBLE SMASH</div><h1 class="disp">Smash<br><span>House</span></h1></div>
   <div class="ch" id="c2"><div class="k">02 // EVERY LAYER</div><h2 class="disp">Every<br><span>Layer</span></h2><div class="temp" id="temp">179°C</div></div>
   <div class="ch" id="c3"><div class="k">03 // IN THE BOX</div><h2 class="disp">In the<br><span>Box</span></h2></div>
-  <img id="tray" src="img/tray.webp" alt=""><img id="splB" class="spl" src="img/splash.webp" alt=""><img id="splF" class="spl" src="img/splash.webp" alt="">
+  <img id="tray" src="img/tray.webp" alt="">
   <div id="stage"></div>
   <div id="wrap"></div><div id="lid"><div class="lg">SMASH<b>/</b>HOUSE</div><div class="st">★ ★ ★ ★ ★</div></div>
 </div></div>
@@ -94,7 +92,9 @@ section.s{position:relative;padding:18vh 6vw;border-top:1px solid var(--line)}
   const imgs=L.map(l=>mk('img/'+l.name+'.webp'));
   const fries=mk('img/fries.webp'), shake=mk('img/shake.webp');
   const labs=L.map((l,k)=>{const d=document.createElement('div');d.className='lab';d.innerHTML='<i></i><b>0'+(k+1)+'</b><span>'+l.label+'</span>';pin.appendChild(d);return d});
-  const splB=document.getElementById('splB'), splF=document.getElementById('splF'), pinEl=pin;
+  const FR=await (await fetch('img/frags.json')).json();
+  const frEls=FR.map(f=>{const i=new Image();i.src='img/'+f.f;i.className='frag';stage.appendChild(i);return i});
+  const LP=new Array(n);
   const tray=document.getElementById('tray'), lid=document.getElementById('lid');
   // collapsed stack
   const col=new Array(n);col[n-1]=L[n-1].top;
@@ -137,23 +137,30 @@ section.s{position:relative;padding:18vh 6vw;border-top:1px solid var(--line)}
       else{const bx=land.x+(L[i].left-512)*bs, by=land.y+(col[i]-cMid)*bs*0.9; const arc=Math.sin(Math.PI*pE)*-vh*0.12;
         x=lerp(ax,bx,pE);y=lerp(ay,by,pE)+arc;w=lerp(aw,L[i].w*bs,pE);r=Math.sin(Math.PI*pE)*-14;}
       im.style.width=w+'px'; im.style.transform=`translate(${x}px,${y}px) rotate(${r}deg)`;
+      LP[i]={x,y,w,h:L[i].h*(w/L[i].w),r};
       const lo=cl((seg(t,.30,.36)-i*0.08)*3)*(1-seg(t,.46,.50));
       labs[i].style.opacity=lo.toFixed(3);
       labs[i].style.transform=`translate(${Math.min(x+w+(mob?6:22),vw-(mob?116:250))}px,${y+L[i].h*(w/L[i].w)/2-9}px)`;
     });
-    // cinematic splash from inside the burger
-    const pb=seg(t,.045,.27), pk=Math.sin(Math.PI*pb);
-    const baseW=Math.min(vw,vh)*(mob?1.15:0.95);
-    const grow=0.22+0.95*eo(pb);
-    const wB=baseW*grow, wF=baseW*grow*0.62;
-    splB.style.width=wB+'px'; splB.style.transform=`translate(${V.cx-wB/2}px,${V.cy-wB/2}px) rotate(${pb*18}deg)`;
-    splB.style.opacity=(pk*0.95).toFixed(3); splB.style.filter=`blur(${(1-pk)*5}px)`;
-    splF.style.width=wF+'px'; splF.style.transform=`translate(${V.cx-wF/2}px,${V.cy-wF/2+wF*0.04}px) rotate(${-pb*26+40}deg)`;
-    splF.style.opacity=(Math.sin(Math.PI*seg(t,.06,.22))*0.55).toFixed(3); splF.style.filter=`blur(${(1-pk)*3}px)`;
+    // subtle realistic splash: real pieces pop out of their own layer and fall back
+    const sp=seg(t,.05,.30);
+    frEls.forEach((el,k)=>{
+      const f=FR[k], P=LP[f.layer]; if(!P) return;
+      const up=Math.sin(Math.PI*Math.min(1,sp*1.15));            // out then back
+      const amp=(mob?18:34)*(0.8+0.4*((k*37)%10)/10);
+      const gx=f.dx*amp*up, gy=f.dy*amp*up + (mob?6:12)*sp*sp*up; // slight gravity
+      const w=f.w*P.w, h=f.h*P.h, rr=P.r*Math.PI/180;
+      const lx=(f.x+f.w/2)*P.w-P.w/2, ly=(f.y+f.h/2)*P.h-P.h/2;
+      const cxs=P.x+P.w/2+lx*Math.cos(rr)-ly*Math.sin(rr), cys=P.y+P.h/2+lx*Math.sin(rr)+ly*Math.cos(rr);
+      const x=cxs-w/2+gx, y=cys-h/2+gy;
+      el.style.width=w+'px';
+      el.style.transform=`translate(${x}px,${y}px) rotate(${P.r+f.dx*up*(10+k*2)}deg)`;
+      el.style.opacity=(up>0.02?1:0);
+    });
     // subtle camera punch-in at the burst
-    const cam=1+0.05*Math.sin(Math.PI*seg(t,.04,.18));
+    const cam=1+0.025*Math.sin(Math.PI*seg(t,.04,.18));
     stage.style.transform=`scale(${cam})`; stage.style.transformOrigin=`${V.cx}px ${V.cy}px`;
-    imgs.forEach(im=>im.style.filter=`drop-shadow(0 18px 22px rgba(0,0,0,.55)) blur(${pk*1.6}px)`);
+    
     // fries & shake fly in spinning
     const fw=V.tw*0.24, sw=V.tw*0.11;
     const fx0=-fw*1.2, fy0=vh*0.15, fx1=V.tx+V.tw*0.60, fy1=V.ty+V.th*0.22;
