@@ -27,11 +27,14 @@ nav{display:flex;gap:22px;font-size:12px;letter-spacing:.14em;text-transform:upp
 .ch .temp{font-family:Anton,sans-serif;font-size:clamp(40px,5vw,72px);color:var(--red);margin-top:10px}
 #stage{position:absolute;inset:0;z-index:4}
 #stage img{position:absolute;left:0;top:0;display:block;will-change:transform;filter:drop-shadow(0 18px 22px rgba(0,0,0,.55))}
-.pt{position:absolute;left:0;top:0;border-radius:50%;z-index:5;will-change:transform,opacity;opacity:0}
+.spl{position:absolute;left:0;top:0;pointer-events:none;opacity:0;will-change:transform,opacity,filter}
+#splB{z-index:3}#splF{z-index:5;mix-blend-mode:screen}
+.pin.shake{}
 .lab{position:absolute;left:0;top:0;z-index:7;display:flex;align-items:center;gap:10px;white-space:nowrap;font-size:13px;opacity:0;will-change:transform,opacity}
 .lab i{display:block;width:56px;height:1px;background:var(--red)}
 .lab b{font-family:Anton,sans-serif;font-weight:400;color:var(--red);font-size:15px;letter-spacing:.06em}
 #tray{position:absolute;z-index:3;opacity:0;will-change:transform,opacity}
+#wrap{position:absolute;z-index:6;transform-origin:50% 100%;border-radius:6px 6px 2px 2px;background:repeating-conic-gradient(#b3122a 0 25%,#f1e7dc 0 50%) 0 0/22px 22px;box-shadow:inset 0 -18px 30px rgba(0,0,0,.35),0 10px 30px rgba(0,0,0,.5);opacity:0;will-change:transform}
 #lid{position:absolute;z-index:9;transform-origin:50% 0;border-radius:8px;background:linear-gradient(160deg,#1c1818,#060505);border:2px solid var(--red);box-shadow:0 40px 70px rgba(0,0,0,.7),inset 0 0 50px rgba(255,45,63,.12);display:flex;align-items:center;justify-content:center;opacity:0;will-change:transform}
 #lid .lg{font-family:Anton,sans-serif;font-size:clamp(32px,6vw,72px);letter-spacing:.04em}#lid .lg b{color:var(--red);font-weight:400}
 #lid .st{position:absolute;bottom:14%;font-size:11px;letter-spacing:.4em;color:var(--red)}
@@ -67,9 +70,9 @@ section.s{position:relative;padding:18vh 6vw;border-top:1px solid var(--line)}
   <div class="ch" id="c1"><div class="k">01 // DOUBLE SMASH</div><h1 class="disp">Smash<br><span>House</span></h1></div>
   <div class="ch" id="c2"><div class="k">02 // EVERY LAYER</div><h2 class="disp">Every<br><span>Layer</span></h2><div class="temp" id="temp">179°C</div></div>
   <div class="ch" id="c3"><div class="k">03 // IN THE BOX</div><h2 class="disp">In the<br><span>Box</span></h2></div>
-  <img id="tray" src="img/tray.webp" alt="">
+  <img id="tray" src="img/tray.webp" alt=""><img id="splB" class="spl" src="img/splash.webp" alt=""><img id="splF" class="spl" src="img/splash.webp" alt="">
   <div id="stage"></div>
-  <div id="lid"><div class="lg">SMASH<b>/</b>HOUSE</div><div class="st">★ ★ ★ ★ ★</div></div>
+  <div id="wrap"></div><div id="lid"><div class="lg">SMASH<b>/</b>HOUSE</div><div class="st">★ ★ ★ ★ ★</div></div>
 </div></div>
 
 <section class="s" id="sear"><div class="sear"><div><div class="num">04 // THE SEAR</div><h2 class="big disp">245°C<small>Plancha. 90 secondes. Croûte parfaite.</small></h2><p class="lead">Chaque steak est écrasé fort sur la plaque brûlante pour créer une croûte caramélisée, puis recouvert de cheddar fondu.</p></div><img src="img/patty-1.webp" alt="Smash patty au cheddar"></div></section>
@@ -91,8 +94,7 @@ section.s{position:relative;padding:18vh 6vw;border-top:1px solid var(--line)}
   const imgs=L.map(l=>mk('img/'+l.name+'.webp'));
   const fries=mk('img/fries.webp'), shake=mk('img/shake.webp');
   const labs=L.map((l,k)=>{const d=document.createElement('div');d.className='lab';d.innerHTML='<i></i><b>0'+(k+1)+'</b><span>'+l.label+'</span>';pin.appendChild(d);return d});
-  const cols=['#f6b21a','#ffcc3a','#e0421f','#b3122a','#f3e6c8','#7fa83a'];
-  const pts=[...Array(44)].map((_,k)=>{const d=document.createElement('div');d.className='pt';const s=4+Math.random()*10;d.style.width=d.style.height=s+'px';d.style.background=cols[k%cols.length];pin.appendChild(d);return {d,a:Math.random()*Math.PI*2,r:0.25+Math.random()*0.55,spin:(Math.random()-.5)*2}});
+  const splB=document.getElementById('splB'), splF=document.getElementById('splF'), pinEl=pin;
   const tray=document.getElementById('tray'), lid=document.getElementById('lid');
   // collapsed stack
   const col=new Array(n);col[n-1]=L[n-1].top;
@@ -139,10 +141,19 @@ section.s{position:relative;padding:18vh 6vw;border-top:1px solid var(--line)}
       labs[i].style.opacity=lo.toFixed(3);
       labs[i].style.transform=`translate(${Math.min(x+w+(mob?6:22),vw-(mob?116:250))}px,${y+L[i].h*(w/L[i].w)/2-9}px)`;
     });
-    // particles
-    const pb=seg(t,.05,.30);
-    pts.forEach(p=>{const d=eo(pb)*p.r*Math.min(vw,vh)*(mob?0.9:0.8);const x=V.cx+Math.cos(p.a)*d*1.3,y=V.cy+Math.sin(p.a)*d+pb*pb*vh*0.15;
-      p.d.style.transform=`translate(${x}px,${y}px) rotate(${pb*360*p.spin}deg)`;p.d.style.opacity=(Math.sin(Math.PI*pb)*0.95).toFixed(3);});
+    // cinematic splash from inside the burger
+    const pb=seg(t,.045,.27), pk=Math.sin(Math.PI*pb);
+    const baseW=Math.min(vw,vh)*(mob?1.15:0.95);
+    const grow=0.22+0.95*eo(pb);
+    const wB=baseW*grow, wF=baseW*grow*0.62;
+    splB.style.width=wB+'px'; splB.style.transform=`translate(${V.cx-wB/2}px,${V.cy-wB/2}px) rotate(${pb*18}deg)`;
+    splB.style.opacity=(pk*0.95).toFixed(3); splB.style.filter=`blur(${(1-pk)*5}px)`;
+    splF.style.width=wF+'px'; splF.style.transform=`translate(${V.cx-wF/2}px,${V.cy-wF/2+wF*0.04}px) rotate(${-pb*26+40}deg)`;
+    splF.style.opacity=(Math.sin(Math.PI*seg(t,.06,.22))*0.55).toFixed(3); splF.style.filter=`blur(${(1-pk)*3}px)`;
+    // subtle camera punch-in at the burst
+    const cam=1+0.05*Math.sin(Math.PI*seg(t,.04,.18));
+    stage.style.transform=`scale(${cam})`; stage.style.transformOrigin=`${V.cx}px ${V.cy}px`;
+    imgs.forEach(im=>im.style.filter=`drop-shadow(0 18px 22px rgba(0,0,0,.55)) blur(${pk*1.6}px)`);
     // fries & shake fly in spinning
     const fw=V.tw*0.24, sw=V.tw*0.11;
     const fx0=-fw*1.2, fy0=vh*0.15, fx1=V.tx+V.tw*0.60, fy1=V.ty+V.th*0.22;
@@ -154,6 +165,12 @@ section.s{position:relative;padding:18vh 6vw;border-top:1px solid var(--line)}
     const tr=seg(t,.54,.66); tray.style.opacity=tr; tray.style.transform=`translate(${V.tx}px,${V.ty+(1-eo(tr))*vh*0.25}px)`;
     document.getElementById('floor').style.opacity=(0.9*(1-seg(t,.52,.62))).toFixed(3);
     lid.style.opacity=t>.76?1:0; lid.style.transform=`perspective(1200px) translateY(${(1-pF)*-V.th*0.5}px) rotateX(${(1-pF)*-80}deg)`;
+    // paper wrap folds over the burger
+    const wrap=document.getElementById('wrap'), pw=eio(seg(t,.70,.78));
+    const ww=V.tw*0.30, wh=V.th*0.42;
+    wrap.style.width=ww+'px'; wrap.style.height=wh+'px';
+    wrap.style.left=(V.tx+V.tw*0.40-ww/2)+'px'; wrap.style.top=(V.ty+V.th*0.62-wh)+'px';
+    wrap.style.opacity=t>.70?1:0; wrap.style.transform=`perspective(900px) rotateX(${(1-pw)*88}deg)`;
     // chapters & temp
     const c1=1-seg(t,.04,.10), c2=seg(t,.28,.33)*(1-seg(t,.50,.55)), c3=seg(t,.60,.66);
     document.getElementById('c1').style.opacity=c1; document.getElementById('c2').style.opacity=c2; document.getElementById('c3').style.opacity=c3;
