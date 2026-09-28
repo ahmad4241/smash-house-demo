@@ -56,6 +56,22 @@ section.s{position:relative;padding:18vh 6vw;border-top:1px solid var(--line)}
 .row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:34px}
 .ghost{border:1.5px solid var(--cream);color:var(--cream);text-decoration:none;font-weight:700;font-size:13px;padding:10px 16px;border-radius:999px}
 .note{font-family:Cairo,sans-serif;direction:rtl;color:var(--muted);font-size:12px;text-align:center;padding:26px 0 40px}
+
+#splash{position:absolute;left:0;top:0;z-index:1;pointer-events:none;opacity:0;will-change:transform,opacity}
+#boxsec{position:relative;height:320vh;border-top:1px solid var(--line)}
+#boxsec .pin{position:sticky;top:0;height:100vh;overflow:hidden}
+.boxwrap{position:absolute;left:50%;top:54%;transform:translate(-50%,-50%);width:min(760px,92vw);aspect-ratio:1456/1088;perspective:1400px}
+.boxwrap>img.box{position:absolute;inset:0;width:100%;height:100%;mix-blend-mode:lighten}
+#mini{position:absolute;left:0;top:0;width:100%;height:100%;z-index:2}
+#mini img{position:absolute;display:block;filter:drop-shadow(0 12px 14px rgba(0,0,0,.6))}
+.lid{position:absolute;left:8.5%;width:85%;top:48%;height:45%;transform-origin:50% 0;z-index:3;border-radius:6px;background:linear-gradient(160deg,#1a1717,#070606);border:2px solid var(--red);box-shadow:0 30px 60px rgba(0,0,0,.6),inset 0 0 40px rgba(255,45,63,.12);display:flex;align-items:center;justify-content:center;backface-visibility:hidden;will-change:transform}
+.lid .lg{font-family:Anton,sans-serif;font-size:clamp(34px,6vw,66px);letter-spacing:.04em;color:var(--cream)}
+.lid .lg b{color:var(--red);font-weight:400}
+.boxtitle{position:absolute;left:5vw;top:16vh;z-index:5}
+.boxtitle .k{font-size:12px;letter-spacing:.3em;color:var(--red);margin-bottom:10px}
+.boxtitle h2{margin:0;font-size:clamp(52px,8vw,120px)}
+.boxtitle h2 span{color:transparent;-webkit-text-stroke:1.5px var(--cream)}
+@media (max-width:820px){.boxtitle{top:12vh;left:22px}.boxwrap{top:58%}}
 @media (max-width:820px){
   nav{display:none}
   .title{left:0;right:0;top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 70px);transform:none;padding:0 22px;text-align:left}
@@ -79,22 +95,27 @@ section.s{position:relative;padding:18vh 6vw;border-top:1px solid var(--line)}
     <div class="grid"></div><div class="glow"></div>
     <div class="title" id="title"><div class="k">01 // DOUBLE SMASH</div><h1 class="disp">Smash<br><span>House</span></h1><p>Deux steaks écrasés à la plaque, cheddar fondu, brioche toastée. Rien de plus, rien de moins.</p></div>
     <div class="chap" id="chap"><div class="k">02 // THE LAYERS</div><h2 class="disp">Every<span>Layer</span></h2></div>
-    <div id="stack"></div>
+    <img id="splash" src="img/splash.webp" alt=""><div id="stack"></div>
     <div id="labs"></div>
     <div class="hint">Scroll</div>
   </div>
 </div>
 
-<section class="s" id="sear"><div class="sear"><div><div class="num">03 // THE SEAR</div><h2 class="big disp">245°C<small>Plancha. 90 secondes. Croûte parfaite.</small></h2><p class="lead">Chaque steak est écrasé fort sur la plaque brûlante pour créer une croûte caramélisée, puis recouvert de cheddar fondu.</p></div><img src="img/patty-1.webp" alt="Smash patty au cheddar"></div></section>
 
-<section class="s" id="line"><div class="num">04 // THE LINE-UP</div><h2 class="big disp" style="font-size:clamp(60px,10vw,150px)">Le menu</h2>
+<div id="boxsec"><div class="pin"><div class="grid"></div><div class="glow"></div>
+  <div class="boxtitle"><div class="k">03 // IN THE BOX</div><h2 class="disp">To<br><span>Go</span></h2></div>
+  <div class="boxwrap" id="boxwrap"><img class="box" src="img/box.webp" alt="Boîte avec frites"><div id="mini"></div><div class="lid" id="lid"><div class="lg">SMASH<b>/</b>HOUSE</div></div></div>
+</div></div>
+<section class="s" id="sear"><div class="sear"><div><div class="num">04 // THE SEAR</div><h2 class="big disp">245°C<small>Plancha. 90 secondes. Croûte parfaite.</small></h2><p class="lead">Chaque steak est écrasé fort sur la plaque brûlante pour créer une croûte caramélisée, puis recouvert de cheddar fondu.</p></div><img src="img/patty-1.webp" alt="Smash patty au cheddar"></div></section>
+
+<section class="s" id="line"><div class="num">05 // THE LINE-UP</div><h2 class="big disp" style="font-size:clamp(60px,10vw,150px)">Le menu</h2>
 <div class="line">
  <div class="card"><h3>Single Smash</h3><p>Un steak, cheddar, pickles, sauce maison.</p><div class="price">7 000 IQD</div></div>
  <div class="card"><h3>Double Smash</h3><p>Deux steaks, double cheddar, oignons, laitue, tomate.</p><div class="price">10 000 IQD</div></div>
  <div class="card"><h3>Triple Threat</h3><p>Trois steaks pour les vrais affamés.</p><div class="price">13 000 IQD</div></div>
 </div></section>
 
-<section class="s reserve" id="reserve"><div class="num">05 // RESERVE</div><h2 class="disp">Order<br><span>Now</span></h2><div class="row"><a class="btn" href="#">WhatsApp</a><a class="ghost" href="#">Voir sur la carte</a></div></section>
+<section class="s reserve" id="reserve"><div class="num">06 // RESERVE</div><h2 class="disp">Order<br><span>Now</span></h2><div class="row"><a class="btn" href="#">WhatsApp</a><a class="ghost" href="#">Voir sur la carte</a></div></section>
 <div class="note">ديمو تجريبي: الاسم والأسعار والصور مؤقتة، وتنبدّل حسب المطعم.</div>
 
 <script>
@@ -140,11 +161,41 @@ section.s{position:relative;padding:18vh 6vw;border-top:1px solid var(--line)}
       lab.style.transform=`translate(${Math.min(lx,innerWidth-(mob?118:260))}px,${ly}px)`;
       lab.style.opacity=Math.max(0,Math.min(1,(e-0.55-i*0.04)*3)).toFixed(3);
     });
+    const sp=document.getElementById('splash');
+    const sb=p<0.1?0:p<0.34?Math.sin(Math.PI*(p-0.1)/0.24):0;
+    const spW=(mob?innerWidth*1.1:innerHeight*1.05)*(0.55+0.7*Math.min(1,(p-0.1)/0.24<0?0:(p-0.1)/0.24));
+    sp.style.width=spW+'px';
+    sp.style.transform=`translate(${S.cx-spW/2}px,${S.cy-spW/2+ (mob?10:30)}px) rotate(${p*120}deg)`;
+    sp.style.opacity=(sb*0.95).toFixed(3);
+    boxFrame();
     const t=document.getElementById('title'), c=document.getElementById('chap');
     t.style.opacity=Math.max(0,1-p*6).toFixed(3);
     c.style.opacity=(p>0.45&&p<0.8?1:p>0.4&&p<=0.45?(p-0.4)/0.05:p>=0.8&&p<0.86?1-(p-0.8)/0.06:0).toFixed(3);
     requestAnimationFrame(frame);
   }
+
+  // ---- box scene ----
+  const mini=document.getElementById('mini'), lid=document.getElementById('lid'), bw=document.getElementById('boxwrap');
+  const mimgs=L.map(l=>{const i=new Image();i.src='img/'+l.name+'.webp';mini.appendChild(i);return i});
+  let bq=0,bshown=0;
+  function boxScroll(){const el=document.getElementById('boxsec');const r=el.getBoundingClientRect();const tot=el.offsetHeight-innerHeight;bq=Math.min(1,Math.max(0,-r.top/tot));}
+  function boxFrame(){
+    bshown+=(bq-bshown)*0.12; const q=bshown;
+    const W=bw.clientWidth, Hh=bw.clientHeight;
+    const bs=(W*0.30)/560; // burger width ~30% of box
+    const land={x:W*0.305,y:Hh*0.60};
+    const drop=q<0.05?0:q<0.4?ease((q-0.05)/0.35):1;
+    const oy=(1-drop)*(-innerHeight*0.9), rot=(1-drop)*-18;
+    mimgs.forEach((im,i)=>{
+      const x=land.x+(L[i].left-512)*bs, y=land.y+oy+(col[i]+colOff-colMidY)*bs*0.8;
+      im.style.width=L[i].w*bs+'px';
+      im.style.transform=`translate(${x}px,${y}px) rotate(${rot}deg)`;
+    });
+    const close=q<0.48?0:q<0.82?ease((q-0.48)/0.34):1;
+    lid.style.transform=`rotateX(${-95+95*close}deg)`;
+    lid.style.opacity=close<0.02?0:1;
+  }
+  addEventListener('scroll',boxScroll,{passive:true}); boxScroll();
   function onScroll(){const el=document.getElementById('explode');const r=el.getBoundingClientRect();const tot=el.offsetHeight-innerHeight;prog=Math.min(1,Math.max(0,-r.top/tot));}
   addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',()=>{layout();onScroll()});
   layout();onScroll();frame();
