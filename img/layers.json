@@ -1,0 +1,60 @@
+{
+"W": 1024,
+"H": 1536,
+"layers": [
+{
+"name": "bun-top",
+"label": "Brioche toast\u00e9e",
+"top": 67,
+"bottom": 300,
+"left": 249,
+"w": 528,
+"h": 233
+},
+{
+"name": "lettuce",
+"label": "Laitue croquante",
+"top": 300,
+"bottom": 480,
+"left": 197,
+"w": 625,
+"h": 180
+},
+{
+"name": "tomato",
+"label": "Tomates fra\u00eeches",
+"top": 480,
+"bottom": 612,
+"left": 263,
+"w": 494,
+"h": 132
+},
+{
+"name": "patty-1",
+"label": "Smash patty \u00b7 cheddar",
+"top": 612,
+"bottom": 882,
+"left": 250,
+"w": 518,
+"h": 270
+},
+{
+"name": "patty-2",
+"label": "Double smash \u00b7 cheddar",
+"top": 882,
+"bottom": 1146,
+"left": 256,
+"w": 514,
+"h": 264
+},
+{
+"name": "bun-bottom",
+"label": "Oignons \u00b7 pickles \u00b7 brioche",
+"top": 1146,
+"bottom": 1473,
+"left": 247,
+"w": 519,
+"h": 327
+}
+]
+}
